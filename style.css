@@ -1,0 +1,45 @@
+body, 
+html {
+	height: 100%;
+	width: 100%;
+}
+
+hr {
+	width: auto;
+	border-color: rgba(255,255,255, 0.5);
+	border-width: 5px;
+}
+
+.bground {
+	background-position: center;
+	background-image: url("TASCropped.jpg");
+	background-size: cover;
+	background-attachment: fixed;
+	min-height: 100%;
+}
+
+.textbox {
+	text-align: center;
+	color: rgba(255, 255, 255, 0.7);
+	font-size: 2rem;
+	font-weight: 600;
+}
+
+.black-text {
+	color: black;
+}
+
+.button-container {
+	display: flex;
+	align-items: justify;
+}
+
+
+
+
+
+
+
+
+
+
