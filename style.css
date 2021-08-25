@@ -15,7 +15,7 @@ hr {
 	background-image: url("TASCropped.jpg");
 	background-size: cover;
 	background-attachment: fixed;
-	min-height: 100vh;
+	min-height: 100%;
 }
 
 .textbox {
