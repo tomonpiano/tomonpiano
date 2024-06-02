@@ -2,32 +2,40 @@ window.onload = function() {
   const VF = Vex.Flow;
   const div = document.getElementById('note-container');
   const renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
-  const pitches = ['c/4', 'd/4', 'e/4', 'f/4', 'g/4', 'a/4', 'b/4', 'c/5'];
+  const pitches = ['c/4', 'd/4', 'e/4', 'f/4', 'g/4', 'a/4', 'b/4', 'c/5', 'd/5', 'e/5', 'f/5', 'g/5', 'a/5'];
   let currentPitch = '';
+  let score = 0;
+  let round = 0;
+  const totalRounds = 10;
+  let shuffledPitches = [];
 
-  const containerWidth = div.offsetWidth;
-  const staveHeight = 200; // Height of the rendering area
-  const staveScaleY = 2.5; // Scale factor for height
-  const staveScaleX = 2.5
-  const staveWidth = 100
-  const staveXpos = 25;
-  const staveYpos = 0;
+  const containerWidth = 300;
+  const staveWidth = 100;
+  const staveScale = 1.5; // Scale factor for both width and height
 
-  renderer.resize(containerWidth, staveHeight);
+  renderer.resize(containerWidth, 200 * staveScale);
   const context = renderer.getContext();
-  context.scale(2, staveScaleY); // Scale the stave height
+  context.scale(staveScale, staveScale); // Scale both width and height
 
   context.setFont('Arial', 10, '').setBackgroundFillStyle('#eed');
 
-  const stave = new VF.Stave(staveXpos, staveYpos, staveWidth); // Adjust the y-coordinate to position the stave correctly
+  const stave = new VF.Stave((containerWidth / staveScale - staveWidth) / 2, 50 / staveScale, staveWidth);
   stave.addClef('treble').setContext(context).draw();
+
+  function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+  }
 
   function renderNote() {
       context.clear();
-      context.scale(2,2 ); // Apply the scale again after clearing
+      context.scale(staveScale, staveScale); // Apply the scale again after clearing
       stave.setContext(context).draw();
 
-      currentPitch = pitches[Math.floor(Math.random() * pitches.length)];
+      currentPitch = shuffledPitches[round];
       const notes = [
           new VF.StaveNote({
               keys: [currentPitch],
@@ -42,7 +50,7 @@ window.onload = function() {
 
       voice.addTickables(notes);
 
-      const formatter = new VF.Formatter().joinVoices([voice]).format([voice], containerWidth);
+      const formatter = new VF.Formatter().joinVoices([voice]).format([voice], staveWidth);
 
       voice.draw(context, stave);
   }
@@ -53,10 +61,10 @@ window.onload = function() {
 
       if (guessedNote === correctNote) {
           event.target.classList.add('correct');
+          score++;
           setTimeout(() => {
               event.target.classList.remove('correct');
-              renderNote();
-              clearMessage();
+              nextRound();
           }, 1000);
       } else {
           event.target.classList.add('incorrect');
@@ -68,6 +76,20 @@ window.onload = function() {
       }
   }
 
+  function nextRound() {
+      round++;
+      updateScore();
+      if (round < totalRounds) {
+          renderNote();
+      } else {
+          endGame();
+      }
+  }
+
+  function updateScore() {
+      document.getElementById('score').innerText = `Score: ${score} / ${totalRounds}`;
+  }
+
   function showMessage(message) {
       document.getElementById('message').innerText = message;
   }
@@ -76,10 +98,27 @@ window.onload = function() {
       document.getElementById('message').innerText = '';
   }
 
+  function endGame() {
+      showMessage(`Game over! You scored ${score} out of ${totalRounds}.`);
+      document.getElementById('restart-button').style.display = 'block';
+  }
+
+  function resetGame() {
+      score = 0;
+      round = 0;
+      clearMessage();
+      updateScore();
+      shuffledPitches = shuffleArray([...pitches]);
+      document.getElementById('restart-button').style.display = 'none';
+      renderNote();
+  }
+
+  document.getElementById('restart-button').addEventListener('click', resetGame);
+
   document.querySelectorAll('.guess-button').forEach(button => {
       button.addEventListener('click', handleGuess);
   });
 
   // Initial render
-  renderNote();
+  resetGame();
 };

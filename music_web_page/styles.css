@@ -11,8 +11,7 @@ body {
 }
 
 #note-container {
-  width: 90%;
-  max-width: 300px;
+  width: 300px;
   margin: 20px auto;
   background-color: white;
   padding: 20px;
@@ -50,4 +49,20 @@ body {
   margin-top: 20px;
   font-size: 18px;
   color: red;
+}
+
+#score {
+  margin-top: 20px;
+  font-size: 18px;
+}
+
+#restart-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
